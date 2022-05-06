@@ -1,0 +1,13 @@
+{
+    "id": 0,
+    "values": [
+        "column_1": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+        "column_2": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+        "column_n": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+    ],
+    "show_values": [
+        "column_1": [true, false, true, false, false, true, false, false, false, true],
+        "column_2": [true, false, true, false, false, true, false, false, false, true],
+        "column_n": [true, false, true, false, false, true, false, false, false, true]
+    ]
+}
