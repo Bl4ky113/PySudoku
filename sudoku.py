@@ -15,23 +15,35 @@ class SudokuAxis ():
 
 class Sudoku ():
     def __init__ (self, num_rows, num_columns):
-        self.rows = SudokuAxis(num_columns, num_rows)
-        self.columns = SudokuAxis(num_rows, num_columns)
-        self.num_rows = num_rows
-        self.num_columns = num_columns
+        self.num_rows: int = num_rows
+        self.num_columns: int = num_columns
+        self.__rows = SudokuAxis(num_columns, num_rows)
+        self.__columns = SudokuAxis(num_rows, num_columns)
+
+    def __getitem__ (self, index:int):
+        return self.__rows[index]
+
+    def __setitem__ (self, index:tuple, value:int):
+        if len(index) != 2:
+            raise IndexError("Index must be [x, y]")
+
+        i, j = index
+
+        self.__rows[i][j] = value
+        self.__columns[j][i] = value
 
     def __str__ (self):
-        string = ""
+        string: str = ""
 
-        index = 0
+        index: int = 0
         string += "Row ->\n"
-        for row in self.rows:
+        for row in self.__rows:
             string += f"{index} | {row}\n"
             index += 1
     
-        index = 0
+        index: int = 0
         string += "Column ->\n"
-        for column in self.columns:
+        for column in self.__columns:
             string += f"{index} | {column}\n"
             index += 1
 
@@ -44,13 +56,12 @@ def test_sudoku ():
     print(str(test))
 
     print(separator)
-    print(test.rows[0])
-    print(test.rows[0][0])
-    test.rows[0] = None
-    test.rows[1][0] = "hello"
-    print(test.rows[0])
-    print(test.rows[1])
-    print(test.rows[1][0])
+    print(test[0][1])
+    test[0, 1] = "hello"
+    print(test[0])
+    print(test[0][1])
+
+    print(str(test))
 
 if __name__ == "__main__":
     test_sudoku()
