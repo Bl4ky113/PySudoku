@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 
 """ Creates a Sudoku Obj, which values can be returned as a 
-    row, column, and invidiualy.
+    row, column, inter section, and invidiualy.
 """
 
 class SudokuAxis ():
@@ -31,7 +31,7 @@ class Sudoku ():
         can return them by accessing with [] or using each axis 
         property and access values with []
     """
-    def __init__ (self, num_rows:int, num_columns:int, section_width:int=0, section_height:int=0):
+    def __init__ (self, num_rows:int, num_columns:int, section_width:int=0, section_height:int=0) -> None:
         """ States the number of rows, columns
             size of inter sections (cubes),
             then creates a SudokuAxis instance for each 
@@ -55,7 +55,7 @@ class Sudoku ():
         """ Returns row element """
         return self.rows[index]
 
-    def __setitem__ (self, index:tuple[int, int], value:int):
+    def __setitem__ (self, index:tuple[int, int], value:int) -> None:
         """ Checks if index is [x, y] and changes the value 
             in the row "x" and cloumn "y" with the given value
         """
@@ -67,7 +67,7 @@ class Sudoku ():
         self.rows[i][j] = value
         self.columns[j][i] = value
 
-    def __str__ (self):
+    def __str__ (self) -> str:
         """ Converts all sudoku values, rows and columns separated, into a string """
         string: str = ""
 
@@ -86,49 +86,67 @@ class Sudoku ():
         return string
     
     @property
-    def __num_squares (self):
-        """ Calculates the number of inter sections on the sudoku with
-            the number or rows and columns or the sudoku, divided by 
-            the width and height of each section
+    def __sections_by_rows (self) -> int:
+        """ Calculates the number of sections by rows 
+            dividing the number of them by the width of each section
         """
-        squares_by_rows: int = self.num_rows // self.section_width
-        squares_by_columns: int = self.num_columns // self.section_height
-        total_squares: int = squares_by_rows * squares_by_columns
+        return self.num_rows // self.section_width
 
-        return total_squares
+    @property
+    def __sections_by_columns (self) -> int:
+        """ Calculates the number of sections by columns
+            dividing the number of them by the height of each section
+        """
+        return self.num_columns // self.section_height
 
-    def __get_square(self, square_index:int):
+    @property
+    def __num_section (self) -> int:
+        """ Calculates the number of sections by multipling the 
+            number of sections by columns and rows
+        """
+        return self.__sections_by_columns * self.__sections_by_rows
+
+    def __get_section(self, section_index:int) -> tuple[int]:
         """ Gets the values of a Inter Section in the sudoku by a given index
             using the values of rows and number of rows, columns of the sudoku and 
             width, height of each section.
             Returns the values in a tuple in this order (row[0][value_1], row[0][value_n], row[n][value_1] ...)
         """
-        if square_index > (self.__num_squares - 1) or square_index < 0:
-            raise IndexError("Square Index out of range")
+        if section_index > (self.__num_section - 1) or section_index < 0:
+            raise IndexError("Section Index out of range")
 
-        square_values: list[int] = []
+        section_values: list[int] = []
 
-        row_index: int = (square_index // (self.num_rows // self.section_width)) * self.section_height
-        value_index: int = (square_index % (self.num_columns // self.section_height)) * self.section_height
+        row_index: int = (section_index // self.__sections_by_rows) * self.section_height
+        value_index: int = (section_index % self.__sections_by_columns) * self.section_height
     
         for row in self.rows[row_index:(row_index + self.section_width)]:
             for j in range(self.section_height):
-                square_values.append(row[j + value_index])
+                section_values.append(row[j + value_index])
 
-        return tuple(square_values)
+        return tuple(section_values)
 
-    def check_row (self, row_index:int, value:int):
+    def get_section_index (self, row_index:int, column_index:int) -> int:
+        """ Uses a row and column index to calulate the 
+            equivalent section index
+        """
+        section_row = (row_index // self.__sections_by_rows)
+        section_column = (column_index // self.__sections_by_columns)
+
+        return section_row + (section_column * self.__sections_by_columns)
+
+    def check_row (self, row_index:int, value:int) -> bool:
         """ Checks if values is in given square by index """
         return value in self.rows[row_index]
 
-    def check_column (self, column_index:int, value:int):
+    def check_column (self, column_index:int, value:int) -> bool:
         """ Checks if value is in given square by index """
-        return value in self.column[column_index]
+        return value in self.columns[column_index]
 
-    def check_square (self, square_index:int, value:int):
-        """ Checks if value is in given square by index """
-        square: tuple[int] = self.__get_square(square_index)
-        return value in square
+    def check_section (self, section_index:int, value:int) -> bool:
+        """ Checks if value is in given section by index """
+        section: tuple[int] = self.__get_section(section_index)
+        return value in section
 
 def test_sudoku ():
     test = Sudoku(9, 9, 3, 3)
@@ -142,16 +160,6 @@ def test_sudoku ():
         num_row += 1
 
     print(str(test))
-
-    print(test.check_square(0, "10"))
-    print(test.check_square(1, 10))
-    print(test.check_square(2, 10))
-    print(test.check_square(3, 10))
-    print(test.check_square(4, 10))
-    print(test.check_square(5, 10))
-    print(test.check_square(6, 10))
-    print(test.check_square(7, 10))
-    print(test.check_square(8, 10))
 
 if __name__ == "__main__":
     test_sudoku()
