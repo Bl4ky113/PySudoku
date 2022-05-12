@@ -6,7 +6,9 @@ sudokus, using Python as the main programing language and saving sudokus in JSON
 ## Install
 
 ```
-$ git pull
+$ git clone git@github.com:Bl4ky113/PySudoku.git ./pysudoku
+$ cd pysudoku/
+$ pip3 install -r requirements.txt
 ```
 
 ## Sudoku Creator
